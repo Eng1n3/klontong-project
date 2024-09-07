@@ -1,0 +1,23 @@
+###
+DELETE http://localhost:3000/product-category/a36c1954-241f-44ca-8c52-180de4a85a62 HTTP/1.1
+Content-Type: application/json
+
+###
+PATCH http://localhost:3000/product-category/ff37db0f-e225-4eba-82fa-c6e1db1c7f26 HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "food"
+}
+
+###
+GET http://localhost:3000/product-category?order_by=id&direction=desc HTTP/1.1
+
+###
+POST http://localhost:3000/product-category HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "Food",
+    "description": "category for food"
+}

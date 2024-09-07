@@ -23,6 +23,8 @@ export class ProductImage {
 
   @Column({
     name: 'caption',
+    type: 'varchar',
+    length: 100
   })
   caption: string;
 
@@ -42,6 +44,12 @@ export class ProductImage {
   })
   checksum: string;
 
+  @Column({
+    name: 'is_main',
+    type: 'boolean'
+  })
+  isMain: boolean
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp with time zone',
@@ -60,6 +68,6 @@ export class ProductImage {
   })
   deletedAt: Date;
 
-  @OneToMany((type) => Product, (product) => product.productCategory)
+  @OneToMany((type) => Product, (product) => product.productImage)
   product?: Product[];
 }

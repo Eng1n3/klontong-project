@@ -26,7 +26,7 @@ export class Product {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'product_category_id' })
+  @JoinColumn({ name: 'product_category_id', foreignKeyConstraintName: 'FK_products_product_categories' })
   productCategory: ProductCategory;
 
   @Column({ name: 'product_image_id' })
@@ -41,7 +41,7 @@ export class Product {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'product_image_id' })
+  @JoinColumn({ name: 'product_image_id', foreignKeyConstraintName: 'FK_products_product_images' })
   productImage: ProductImage;
 
   @PrimaryGeneratedColumn('uuid', {
@@ -49,10 +49,10 @@ export class Product {
   })
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   sku: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
   @Column({ type: 'text' })

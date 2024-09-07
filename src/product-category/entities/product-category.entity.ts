@@ -11,23 +11,12 @@ import {
 
 @Entity('product_categories')
 export class ProductCategory {
-  //   @ManyToOne((type) => User, (user) => user.project, {
-  //     nullable: true,
-  //     cascade: true,
-  //     onDelete: 'CASCADE',
-  //   })
-  //   @JoinColumn({ name: 'idUser' })
-  //   @Field(() => User, {
-  //     description: 'user bedasarkan project contoh: {...user}',
-  //   })
-  //   user?: User;
-
   @PrimaryGeneratedColumn('uuid', {
     primaryKeyConstraintName: 'PK_product_categories',
   })
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
   @Column({ type: 'text' })
