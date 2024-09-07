@@ -1,3 +1,4 @@
+import { Exclude, Expose } from 'class-transformer';
 import { ProductCategory } from 'src/product-category/entities/product-category.entity';
 import { ProductImage } from 'src/product-image/entities/product-image.entity';
 import {
@@ -13,10 +14,11 @@ import {
 
 @Entity('products')
 export class Product {
-
+  @Exclude()
   @Column({ name: 'product_category_id' })
   productCategoryId: string;
 
+  @Exclude()
   @ManyToOne(
     () => ProductCategory,
     (productCategory) => productCategory.product,
@@ -26,22 +28,26 @@ export class Product {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'product_category_id', foreignKeyConstraintName: 'FK_products_product_categories' })
+  @JoinColumn({
+    name: 'product_category_id',
+    foreignKeyConstraintName: 'FK_products_product_categories',
+  })
   productCategory: ProductCategory;
 
+  @Exclude()
   @Column({ name: 'product_image_id' })
   productImageId: string;
 
-  @ManyToOne(
-    () => ProductImage,
-    (productImage) => productImage.product,
-    {
-      nullable: false,
-      cascade: true,
-      onDelete: 'CASCADE',
-    },
-  )
-  @JoinColumn({ name: 'product_image_id', foreignKeyConstraintName: 'FK_products_product_images' })
+  @Exclude()
+  @ManyToOne(() => ProductImage, (productImage) => productImage.product, {
+    nullable: false,
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({
+    name: 'product_image_id',
+    foreignKeyConstraintName: 'FK_products_product_images',
+  })
   productImage: ProductImage;
 
   @PrimaryGeneratedColumn('uuid', {
@@ -58,27 +64,46 @@ export class Product {
   @Column({ type: 'text' })
   description: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float' })
   weight: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float' })
   width: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float' })
   length: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float' })
   height: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'float' })
   price: number;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  @DeleteDateColumn({ type: 'timestamp with time zone' })
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone' })
   deletedAt: Date;
+
+  @Expose({ name: 'image' })
+  get imagePath(): string {
+    return this.productImage.path;
+  }
+
+  @Expose()
+  get categoryId(): string {
+    return this.productCategory.id;
+  }
+
+  @Expose()
+  get categoryName(): string {
+    return this.productCategory.name;
+  }
+
+  constructor(partial: Partial<Product>) {
+    Object.assign(this, partial);
+  }
 }

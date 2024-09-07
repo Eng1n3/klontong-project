@@ -24,7 +24,7 @@ export class ProductImage {
   @Column({
     name: 'caption',
     type: 'varchar',
-    length: 100
+    length: 100,
   })
   caption: string;
 
@@ -34,7 +34,7 @@ export class ProductImage {
   mimeType: string;
 
   @Column({
-    type: 'int4',
+    type: 'float',
     name: 'size',
   })
   size: number;
@@ -46,9 +46,9 @@ export class ProductImage {
 
   @Column({
     name: 'is_main',
-    type: 'boolean'
+    type: 'boolean',
   })
-  isMain: boolean
+  isMain: boolean;
 
   @CreateDateColumn({
     name: 'created_at',

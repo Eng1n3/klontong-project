@@ -1,7 +1,6 @@
-import { ConfigService } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { join } from 'path';
-import 'src/common/config/config.env';
+import { ConfigService } from 'src/config/config.service';
 
 const configService = new ConfigService();
 

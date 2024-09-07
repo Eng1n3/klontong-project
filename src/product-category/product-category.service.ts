@@ -16,8 +16,8 @@ import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { PageParametersDto } from 'src/common/dto/page-parameters.dto';
 import { PageMetaDto } from 'src/common/dto/page-meta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
-import { ProductCategoryOrderBy } from './enum/order-by.enum';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
+import { ProductImage } from 'src/product-image/entities/product-image.entity';
 
 @Injectable()
 export class ProductCategoryService {
@@ -96,7 +96,7 @@ export class ProductCategoryService {
   ) {
     const isExist = await this.productCategoryRepo.findOneBy({
       name: createProductCategoryDto.name,
-    });    
+    });
     if (isExist) throw new BadRequestException('Category already exists');
     const productCategory = this.productCategoryRepo.create(
       createProductCategoryDto,
