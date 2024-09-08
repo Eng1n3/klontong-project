@@ -45,6 +45,17 @@ export class ProductController {
     return { message: 'Succes created product' };
   }
 
+  @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
+  @HttpCode(HttpStatus.OK)
+  async findOneProductCategory(@Param('id', ParseUUIDPipe) id: string) {
+    const data = await this.productService.findOneProduct(id);
+    return {
+      message: 'Success get product',
+      data
+    };
+  }
+
   @Get()
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(ClassSerializerInterceptor)

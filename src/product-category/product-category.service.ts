@@ -53,6 +53,11 @@ export class ProductCategoryService {
     await this.productCategoryRepo.save(productCategory);
   }
 
+  async findOneProductCategory(id: string) {
+    const role = await this.productCategoryRepo.findOneBy({ id });
+    return role;
+  }
+
   async findAllProductCategory(
     pageParametersDto: PageParametersDto & { orderBy: string },
   ) {

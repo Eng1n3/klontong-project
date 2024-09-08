@@ -49,6 +49,16 @@ export class ProductCategoryController {
     };
   }
 
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  async findOneProductCategory(@Param('id', ParseUUIDPipe) id: string) {
+    const data = await this.productCategoryService.findOneProductCategory(id);
+    return {
+      message: 'Success get category',
+      data
+    };
+  }
+
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'order_by', enum: ProductCategoryOrderBy })

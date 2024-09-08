@@ -46,6 +46,14 @@ export class ProductService {
     await this.fileRepo.softDelete(isExist.fileId);
   }
 
+  async findOneProduct(id: string) {
+    const role = await this.productRepo.findOne({
+      where: { id },
+      relations: { productCategory: true, file: true },
+    });
+    return role;
+  }
+
   async findAllProduct(
     pageParametersDto: PageParametersDto & { orderBy: string },
   ) {

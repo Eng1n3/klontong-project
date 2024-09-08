@@ -1,5 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { File } from 'src/file/entities/file.entity';
+import { Log } from 'src/log/entities/user.entity';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import {
   Column,
@@ -17,12 +18,12 @@ import {
 export class User {
     
   @Exclude()
-  @Column({ name: 'file_id' })
-  fileId: string;
+  @Column({ name: 'file_id', nullable: true })
+  fileId?: string;
 
   @Exclude()
   @ManyToOne(() => File, (file) => file.user, {
-    nullable: false,
+    nullable: true,
     cascade: true,
     onDelete: 'CASCADE',
   })
@@ -30,14 +31,14 @@ export class User {
     name: 'file_id',
     foreignKeyConstraintName: 'FK_user_files',
   })
-  file: File;
+  file?: File;
 
   @PrimaryGeneratedColumn('uuid', {
     primaryKeyConstraintName: 'PK_user',
   })
   id: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   username: string;
 
   @Column({ type: 'varchar', length: 100 })
@@ -46,8 +47,8 @@ export class User {
   @Column({ type: 'varchar', length: 100 })
   email: string;
 
-  @Column({ name: 'phone_number', type: 'varchar', length: 100 })
-  phoneNumber: string;
+  @Column({ name: 'phone_number', type: 'varchar', length: 100, nullable: true })
+  phoneNumber?: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;
@@ -57,6 +58,9 @@ export class User {
 
   @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp with time zone' })
   deletedAt: Date;
+
+  @OneToMany((type) => Log, (log) => log.user)
+  log?: Log[];
 
   @OneToMany((type) => UserRole, (userRole) => userRole.user)
   userRole?: UserRole[];

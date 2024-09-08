@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
 import { ProductModule } from './product/product.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './database/data-source';
@@ -13,6 +12,7 @@ import { RoleModule } from './role/role.module';
 import { UserRoleModule } from './user-role/user-role.module';
 import { FileModule } from './file/file.module';
 import { LogModule } from './log/log.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
