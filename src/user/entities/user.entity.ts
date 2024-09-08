@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { File } from 'src/file/entities/file.entity';
-import { Log } from 'src/log/entities/user.entity';
+import { Log } from 'src/log/entities/log.entity';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import {
   Column,

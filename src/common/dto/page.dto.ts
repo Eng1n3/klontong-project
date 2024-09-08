@@ -14,7 +14,7 @@ export class PageDto<T> {
   readonly message: string;
 
   @ApiProperty()
-  readonly statusCode: string;
+  readonly statusCode: number;
 
   constructor(
     statusCode: number,
@@ -22,6 +22,7 @@ export class PageDto<T> {
     data: T[],
     meta: PageMetaDto,
   ) {
+    this.statusCode = statusCode;
     this.message = message;
     this.data = data;
     this.meta = meta;

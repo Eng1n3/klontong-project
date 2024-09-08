@@ -11,7 +11,6 @@ import {
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { User } from 'src/user/entities/user.entity';
 import { Roles } from './decorators/roles.decorator';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh.auth.guard';
 import { Role } from './enum/roles.enum';

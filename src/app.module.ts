@@ -14,6 +14,11 @@ import { LogModule } from './log/log.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { getEnvPath } from './common/functions/env.function';
+import { UserBalanceModule } from './user-balance/user-balance.module';
+import { VirtualCodeModule } from './virtual-code/virtual-code.module';
+import { BasketModule } from './basket/basket.module';
+import { BasketStatusModule } from './basket-status/basket-status.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
   imports: [
@@ -38,6 +43,11 @@ import { getEnvPath } from './common/functions/env.function';
     UserRoleModule,
     FileModule,
     LogModule,
+    UserBalanceModule,
+    VirtualCodeModule,
+    BasketModule,
+    BasketStatusModule,
+    TransactionModule,
   ],
 })
 export class AppModule {}

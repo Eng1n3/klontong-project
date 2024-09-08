@@ -24,6 +24,8 @@ import { OrderByValidationPipe } from 'src/common/pipes/order-by.pipe';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enum/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
 
 @Controller('product')
 export class ProductController {
@@ -33,8 +35,11 @@ export class ProductController {
   @Roles(Role.SUPERUSER, Role.ADMIN)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async deleteProductCategory(@Param('id', ParseUUIDPipe) id: string) {
-    await this.productService.deleteProduct(id);
+  async deleteProductCategory(
+    @CurrentUser() user: IValidateUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.productService.deleteProduct(id, user);
     return {
       statusCode: HttpStatus.OK,
       message: 'Success deleted product',
@@ -47,10 +52,11 @@ export class ProductController {
   @FormDataRequest()
   @HttpCode(HttpStatus.CREATED)
   async updateProduct(
+    @CurrentUser() user: IValidateUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createProductDto: CreateProductDto,
   ) {
-    await this.productService.updateProduct({ ...createProductDto, id });
+    await this.productService.updateProduct({ ...createProductDto, id }, user);
     return { statusCode: HttpStatus.OK, message: 'Succes updated product' };
   }
 
@@ -64,7 +70,7 @@ export class ProductController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Success get product',
-      data
+      data,
     };
   }
 
@@ -91,8 +97,14 @@ export class ProductController {
   @UseGuards(JwtAuthGuard)
   @FormDataRequest()
   @HttpCode(HttpStatus.CREATED)
-  async createProduct(@Body() createProductDto: CreateProductDto) {
-    await this.productService.createProduct(createProductDto);
-    return { statusCode: HttpStatus.CREATED, message: 'Succes created product' };
+  async createProduct(
+    @CurrentUser() user: IValidateUser,
+    @Body() createProductDto: CreateProductDto,
+  ) {
+    await this.productService.createProduct(createProductDto, user);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Succes created product',
+    };
   }
 }

@@ -18,23 +18,37 @@ import {
 } from 'typeorm';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { PageParametersDto } from 'src/common/dto/page-parameters.dto';
+import { Log } from 'src/log/entities/log.entity';
+import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
 
 @Injectable()
 export class RoleService {
   constructor(
     @InjectRepository(Role)
     private roleRepo: Repository<Role>,
+    @InjectRepository(Log)
+    private logRepo: Repository<Log>,
   ) {}
 
-  async deleteRole(id: string) {
+  async deleteRole(id: string, user: IValidateUser) {
     const isExist = await this.roleRepo.findOneBy({
       id,
     });
     if (!isExist) throw new NotFoundException('Data not found');
     await this.roleRepo.softDelete(id);
+    const log = this.logRepo.create({
+      action: 'delete',
+      modifiedData: { id },
+      tableName: this.roleRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save(log);
   }
 
-  async updateRole(updateRoleDto: UpdateRoleDto & { id: string }) {
+  async updateRole(
+    updateRoleDto: UpdateRoleDto & { id: string },
+    user: IValidateUser,
+  ) {
     const isExist = await this.roleRepo.findOneBy({
       id: updateRoleDto.id,
     });
@@ -50,6 +64,13 @@ export class RoleService {
       ...updateRoleDto,
     });
     await this.roleRepo.save(role);
+    const log = this.logRepo.create({
+      action: 'update',
+      modifiedData: role,
+      tableName: this.roleRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save(log);
   }
 
   async findOneRole(id: string) {
@@ -79,7 +100,7 @@ export class RoleService {
       : null;
 
     const roles = await this.roleRepo.find({
-      take: pageParametersDto.skip,
+      take: pageParametersDto.take,
       skip: pageParametersDto.skip,
       where: findOptionsWhere,
       order,
@@ -92,12 +113,19 @@ export class RoleService {
     return new PageDto(HttpStatus.OK, 'Success get roles', roles, pageMetaDto);
   }
 
-  async createRole(createRoleDto: CreateRoleDto) {
+  async createRole(createRoleDto: CreateRoleDto, user: IValidateUser) {
     const isExist = await this.roleRepo.findOneBy({
       name: createRoleDto.name,
     });
     if (isExist) throw new BadRequestException('Role already exists');
     const role = this.roleRepo.create(createRoleDto);
     await this.roleRepo.save(role);
+    const log = this.logRepo.create({
+      action: 'create',
+      modifiedData: role,
+      tableName: this.roleRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save(log);
   }
 }

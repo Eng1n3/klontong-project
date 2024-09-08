@@ -24,6 +24,8 @@ import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enum/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('product-category')
 export class ProductCategoryController {
@@ -33,8 +35,11 @@ export class ProductCategoryController {
   @Roles(Role.SUPERUSER, Role.ADMIN)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async deleteProductCategory(@Param('id', ParseUUIDPipe) id: string) {
-    await this.productCategoryService.deleteProductCategory(id);
+  async deleteProductCategory(
+    @CurrentUser() user: IValidateUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    await this.productCategoryService.deleteProductCategory(id, user);
     return {
       statusCode: HttpStatus.OK,
       message: 'Success deleted category',
@@ -46,13 +51,17 @@ export class ProductCategoryController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async updateProductCategory(
+    @CurrentUser() user: IValidateUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductCategoryDto: UpdateProductCategoryDto,
   ) {
-    await this.productCategoryService.updateProductCategory({
-      ...updateProductCategoryDto,
-      id,
-    });
+    await this.productCategoryService.updateProductCategory(
+      {
+        ...updateProductCategoryDto,
+        id,
+      },
+      user,
+    );
     return {
       statusCode: HttpStatus.OK,
       message: 'Success updated category',
@@ -68,7 +77,7 @@ export class ProductCategoryController {
     return {
       statusCode: HttpStatus.OK,
       message: 'Success get category',
-      data
+      data,
     };
   }
 
@@ -94,11 +103,16 @@ export class ProductCategoryController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createProductCategory(
+    @CurrentUser() user: IValidateUser,
     @Body() createProductCategoryDto: CreateProductCategoryDto,
   ) {
     await this.productCategoryService.createProductCategory(
       createProductCategoryDto,
+      user,
     );
-    return { statusCode: HttpStatus.CREATED, message: 'Succes created category' };
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Succes created category',
+    };
   }
 }

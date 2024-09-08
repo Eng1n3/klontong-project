@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
@@ -9,9 +9,11 @@ import { PageMetaDto } from 'src/common/dto/page-meta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
 import { PageParametersDto } from 'src/common/dto/page-parameters.dto';
 import { join } from 'path';
-import { rmSync } from 'fs';
+import { exists, rmSync } from 'fs';
 import { CreateFile } from 'src/common/interfaces/create-file.interface';
 import { File } from 'src/file/entities/file.entity';
+import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
+import { Log } from 'src/log/entities/log.entity';
 
 @Injectable()
 export class ProductService {
@@ -22,6 +24,8 @@ export class ProductService {
     private productRepo: Repository<Product>,
     @InjectRepository(ProductCategory)
     private productCategoryRepo: Repository<ProductCategory>,
+    @InjectRepository(Log)
+    private logRepo: Repository<Log>,
   ) {}
 
   private generateSku(name: string, weight: number): string {
@@ -35,7 +39,7 @@ export class ProductService {
     return `${productCode}${weightCode}${randomString}`;
   }
 
-  async deleteProduct(id: string) {
+  async deleteProduct(id: string, user: IValidateUser) {
     const isExist = await this.productRepo.findOne({
       where: {
         id,
@@ -44,6 +48,19 @@ export class ProductService {
     if (!isExist) throw new NotFoundException('Data not found');
     await this.productRepo.softDelete(id);
     await this.fileRepo.softDelete(isExist.fileId);
+    const logFile = this.logRepo.create({
+      action: 'update',
+      modifiedData: { id: isExist.fileId },
+      tableName: this.fileRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    const logProduct = this.logRepo.create({
+      action: 'update',
+      modifiedData: { id },
+      tableName: this.productRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save([logFile, logProduct]);
   }
 
   async findOneProduct(id: string) {
@@ -77,7 +94,7 @@ export class ProductService {
       : null;
 
     const products = await this.productRepo.find({
-      take: pageParametersDto.skip,
+      take: pageParametersDto.take,
       skip: pageParametersDto.skip,
       where: findOptionsWhere,
       order,
@@ -88,10 +105,18 @@ export class ProductService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageParametersDto });
 
-    return new PageDto(HttpStatus.OK,  'Success get product', products, pageMetaDto);
+    return new PageDto(
+      HttpStatus.OK,
+      'Success get product',
+      products,
+      pageMetaDto,
+    );
   }
 
-  async updateProduct(createProductDto: CreateProductDto & { id: string }) {
+  async updateProduct(
+    createProductDto: CreateProductDto & { id: string },
+    user: IValidateUser,
+  ) {
     let createFile: CreateFile;
     let sku: string;
     const imageDto = createProductDto.image;
@@ -132,10 +157,24 @@ export class ProductService {
     });
     const product = this.productRepo.create(productCreate);
     await this.productRepo.save(product);
+    const logFile = this.logRepo.create({
+      action: 'update',
+      modifiedData: createFile || undefined,
+      tableName: this.fileRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    const logProduct = this.logRepo.create({
+      action: 'update',
+      modifiedData: product,
+      tableName: this.productRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save([logFile, logProduct]);
   }
 
-  async createProduct(createProductDto: CreateProductDto) {
+  async createProduct(createProductDto: CreateProductDto, user: IValidateUser) {
     const imageDto = createProductDto.image;
+    if(!imageDto) throw new BadRequestException('file not found!')
     const fileValue = await createFileFunction(imageDto, 'product-images');
     const sku = this.generateSku(
       createProductDto.name,
@@ -159,5 +198,18 @@ export class ProductService {
     });
     const product = this.productRepo.create(productCreate);
     await this.productRepo.save(product);
+    const logFile = this.logRepo.create({
+      action: 'create',
+      modifiedData: fileValue,
+      tableName: this.fileRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    const logProduct = this.logRepo.create({
+      action: 'create',
+      modifiedData: product,
+      tableName: this.productRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save([logFile, logProduct]);
   }
 }

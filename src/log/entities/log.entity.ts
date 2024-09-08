@@ -16,7 +16,7 @@ import {
 export class Log {
   @Exclude()
   @Column({ name: 'modified_by' })
-  modified_by: string;
+  modifiedBy: string;
 
   @Exclude()
   @ManyToOne(() => User, (user) => user.log, {
@@ -42,7 +42,7 @@ export class Log {
   tableName: string;
 
   @Column({ name: 'modified_data', type: 'json' })
-  modifiedData: string;
+  modifiedData: any;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp with time zone' })
   createdAt: Date;

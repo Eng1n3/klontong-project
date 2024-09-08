@@ -18,24 +18,36 @@ import { PageParametersDto } from 'src/common/dto/page-parameters.dto';
 import { PageMetaDto } from 'src/common/dto/page-meta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
+import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
+import { Log } from 'src/log/entities/log.entity';
 
 @Injectable()
 export class ProductCategoryService {
   constructor(
     @InjectRepository(ProductCategory)
     private productCategoryRepo: Repository<ProductCategory>,
+    @InjectRepository(Log)
+    private logRepo: Repository<Log>,
   ) {}
 
-  async deleteProductCategory(id: string) {
+  async deleteProductCategory(id: string, user: IValidateUser) {
     const isExist = await this.productCategoryRepo.findOneBy({
       id,
     });
     if (!isExist) throw new NotFoundException('Data not found');
     await this.productCategoryRepo.softDelete(id);
+    const log = this.logRepo.create({
+      action: 'delete',
+      modifiedData: { id },
+      tableName: this.productCategoryRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save(log);
   }
 
   async updateProductCategory(
     updateProductCategoryDto: UpdateProductCategoryDto & { id: string },
+    user: IValidateUser,
   ) {
     const isExist = await this.productCategoryRepo.findOneBy({
       id: updateProductCategoryDto.id,
@@ -52,6 +64,13 @@ export class ProductCategoryService {
       ...updateProductCategoryDto,
     });
     await this.productCategoryRepo.save(productCategory);
+    const log = this.logRepo.create({
+      action: 'update',
+      modifiedData: productCategory,
+      tableName: this.productCategoryRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save(log);
   }
 
   async findOneProductCategory(id: string) {
@@ -83,7 +102,7 @@ export class ProductCategoryService {
         : null;
 
     const categories = await this.productCategoryRepo.find({
-      take: pageParametersDto.skip,
+      take: pageParametersDto.take,
       skip: pageParametersDto.skip,
       where: findOptionsWhere,
       order,
@@ -93,11 +112,17 @@ export class ProductCategoryService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageParametersDto });
 
-    return new PageDto(HttpStatus.OK, 'Success get categories', categories, pageMetaDto);
+    return new PageDto(
+      HttpStatus.OK,
+      'Success get categories',
+      categories,
+      pageMetaDto,
+    );
   }
 
   async createProductCategory(
     createProductCategoryDto: CreateProductCategoryDto,
+    user: IValidateUser,
   ) {
     const isExist = await this.productCategoryRepo.findOneBy({
       name: createProductCategoryDto.name,
@@ -107,5 +132,12 @@ export class ProductCategoryService {
       createProductCategoryDto,
     );
     await this.productCategoryRepo.save(productCategory);
+    const log = this.logRepo.create({
+      action: 'create',
+      modifiedData: productCategory,
+      tableName: this.productCategoryRepo.metadata.tableName,
+      modifiedBy: user.id,
+    });
+    await this.logRepo.save(log);
   }
 }
