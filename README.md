@@ -2,6 +2,8 @@
 
 ## Description
 
+A small convenience store wants to enter the 21st century by selling their products online.
+
 ## ERD
 
 <a href="https://whimsical.com/klontong-MRfZsd6nHCMvdDtjsvWT2">ERD project</a>
