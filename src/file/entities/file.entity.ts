@@ -1,4 +1,5 @@
 import { Product } from 'src/product/entities/product.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,10 +10,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'product_images' })
-export class ProductImage {
+@Entity({ name: 'files' })
+export class File {
   @PrimaryGeneratedColumn('uuid', {
-    primaryKeyConstraintName: 'PK_product_images',
+    primaryKeyConstraintName: 'PK_files',
   })
   id: string;
 
@@ -68,6 +69,9 @@ export class ProductImage {
   })
   deletedAt: Date;
 
-  @OneToMany((type) => Product, (product) => product.productImage)
+  @OneToMany((type) => User, (user) => user.file)
+  user?: User[];
+
+  @OneToMany((type) => Product, (product) => product.file)
   product?: Product[];
 }

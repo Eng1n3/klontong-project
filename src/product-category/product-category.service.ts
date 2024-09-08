@@ -17,7 +17,6 @@ import { PageParametersDto } from 'src/common/dto/page-parameters.dto';
 import { PageMetaDto } from 'src/common/dto/page-meta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
-import { ProductImage } from 'src/product-image/entities/product-image.entity';
 
 @Injectable()
 export class ProductCategoryService {

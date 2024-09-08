@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
+import { File } from 'src/file/entities/file.entity';
 import { ProductCategory } from 'src/product-category/entities/product-category.entity';
-import { ProductImage } from 'src/product-image/entities/product-image.entity';
 import {
   Column,
   CreateDateColumn,
@@ -35,20 +35,20 @@ export class Product {
   productCategory: ProductCategory;
 
   @Exclude()
-  @Column({ name: 'product_image_id' })
-  productImageId: string;
+  @Column({ name: 'file_id' })
+  fileId: string;
 
   @Exclude()
-  @ManyToOne(() => ProductImage, (productImage) => productImage.product, {
+  @ManyToOne(() => File, (file) => file.product, {
     nullable: false,
     cascade: true,
     onDelete: 'CASCADE',
   })
   @JoinColumn({
-    name: 'product_image_id',
-    foreignKeyConstraintName: 'FK_products_product_images',
+    name: 'file_id',
+    foreignKeyConstraintName: 'FK_products_files',
   })
-  productImage: ProductImage;
+  file: File;
 
   @PrimaryGeneratedColumn('uuid', {
     primaryKeyConstraintName: 'PK_products',
@@ -90,7 +90,7 @@ export class Product {
 
   @Expose({ name: 'image' })
   get imagePath(): string {
-    return this.productImage.path;
+    return this.file.path;
   }
 
   @Expose()

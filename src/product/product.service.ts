@@ -1,11 +1,4 @@
-import {
-  BadGatewayException,
-  HttpCode,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-  Post,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
@@ -15,16 +8,16 @@ import { ProductCategory } from 'src/product-category/entities/product-category.
 import { PageMetaDto } from 'src/common/dto/page-meta.dto';
 import { PageDto } from 'src/common/dto/page.dto';
 import { PageParametersDto } from 'src/common/dto/page-parameters.dto';
-import { ProductImage } from 'src/product-image/entities/product-image.entity';
 import { join } from 'path';
 import { rmSync } from 'fs';
 import { CreateFile } from 'src/common/interfaces/create-file.interface';
+import { File } from 'src/file/entities/file.entity';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @InjectRepository(ProductImage)
-    private productImageRepo: Repository<ProductImage>,
+    @InjectRepository(File)
+    private fileRepo: Repository<File>,
     @InjectRepository(Product)
     private productRepo: Repository<Product>,
     @InjectRepository(ProductCategory)
@@ -50,7 +43,7 @@ export class ProductService {
     });
     if (!isExist) throw new NotFoundException('Data not found');
     await this.productRepo.softDelete(id);
-    await this.productImageRepo.softDelete(isExist.productImageId);
+    await this.fileRepo.softDelete(isExist.fileId);
   }
 
   async findAllProduct(
@@ -80,7 +73,7 @@ export class ProductService {
       skip: pageParametersDto.skip,
       where: findOptionsWhere,
       order,
-      relations: { productCategory: true, productImage: true },
+      relations: { productCategory: true, file: true },
     });
 
     const itemCount = await this.productRepo.count();
@@ -98,12 +91,12 @@ export class ProductService {
       where: {
         id: createProductDto.id,
       },
-      relations: { productImage: true },
+      relations: { file: true },
     });
     if (!isExist) throw new NotFoundException('Data not found');
     if (imageDto) {
       createFile = await createFileFunction(imageDto, 'product-images');
-      rmSync(join(process.cwd(), isExist.productImage.path), {
+      rmSync(join(process.cwd(), isExist.file.path), {
         recursive: true,
         force: true,
       });
@@ -118,7 +111,7 @@ export class ProductService {
     const productCreate = this.productRepo.create({
       ...createProductDto,
       sku: sku ? sku : undefined,
-      productImage: createFile
+      file: createFile
         ? {
             caption: createFile.originalFilename,
             isMain: true,
@@ -147,7 +140,7 @@ export class ProductService {
     const productCreate = this.productRepo.create({
       ...createProductDto,
       sku,
-      productImage: {
+      file: {
         caption: fileValue.originalFilename,
         isMain: true,
         mimeType: fileValue.mime,

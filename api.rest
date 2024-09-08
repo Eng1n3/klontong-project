@@ -1,5 +1,5 @@
 ###
-DELETE http://localhost:3000/product/5d9f426d-f189-4099-abc0-ccdb992829fb HTTP/1.1
+DELETE http://localhost:3000/product/f2ae1962-c18e-4117-8869-1ce1c0d0bc6a HTTP/1.1
 Content-Type: application/json
 
 ###
