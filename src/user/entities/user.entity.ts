@@ -1,6 +1,7 @@
 import { Exclude, Expose } from 'class-transformer';
 import { File } from 'src/file/entities/file.entity';
 import { Log } from 'src/log/entities/log.entity';
+import { UserBalance } from 'src/user-balance/entities/user-balance.entity';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import {
   Column,
@@ -64,4 +65,7 @@ export class User {
 
   @OneToMany((type) => UserRole, (userRole) => userRole.user)
   userRole?: UserRole[];
+
+  @OneToMany((type) => UserBalance, (userBalance) => userBalance.user)
+  userBalance?: UserBalance;
 }

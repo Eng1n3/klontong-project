@@ -2,7 +2,14 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ERD
+
+<a href="https://whimsical.com/klontong-MRfZsd6nHCMvdDtjsvWT2">ERD project</a>
+
+## Flow Diagram
+
+<a href="https://whimsical.com/flow-klontong-286jNFdqpjnc9qjphf9ykx">Flow project</a>
+
 
 ## Project setup
 

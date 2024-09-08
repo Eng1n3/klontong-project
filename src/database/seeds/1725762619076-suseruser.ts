@@ -7,7 +7,11 @@ import { Role } from 'src/role/entities/role.entity';
 import { UserRole } from 'src/user-role/entities/user-role.entity';
 import { File } from 'src/file/entities/file.entity';
 import { join } from 'path';
-import { getChecksum, getMimetype, getSize } from 'src/common/functions/create-file.function';
+import {
+  getChecksum,
+  getMimetype,
+  getSize,
+} from 'src/common/functions/create-file.function';
 
 export default class SuperUser1725762619076 extends Seeder {
   public async run(datasource: DataSource): Promise<void> {
@@ -16,12 +20,13 @@ export default class SuperUser1725762619076 extends Seeder {
       .find({ where: { name: SuperUser1725762619076.name } });
     if (!dataSeeder.length) {
       const pathDefaultImage = join(
+        process.cwd(),
         'uploads',
         'default-user.jpg',
       );
-      const checksum = await getChecksum(pathDefaultImage)
-      const mimeType = await getMimetype(pathDefaultImage)
-      const size = getSize(pathDefaultImage)
+      const checksum = await getChecksum(pathDefaultImage);
+      const mimeType = await getMimetype(pathDefaultImage);
+      const size = getSize(pathDefaultImage);
       const getSalt = bcrypt.genSaltSync();
       const password = 'Sup3rstrong_password';
       const hashPassword = await bcrypt.hash(password, getSalt);
@@ -35,13 +40,13 @@ export default class SuperUser1725762619076 extends Seeder {
         isMain: true,
         mimeType,
         path: pathDefaultImage,
-        size
+        size,
       });
       const superUser: User = datasource.getRepository(User).create({
         username: 'superuser',
         email: 'superuser@mail.com',
         password: hashPassword,
-        file
+        file,
       });
       const userRole: UserRole = datasource.getRepository(UserRole).create({
         user: superUser,

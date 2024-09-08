@@ -15,13 +15,13 @@ import {
 export class UserBalance {
   @Exclude()
   @PrimaryColumn({
-    name: 'userId',
+    name: 'user_id',
     primaryKeyConstraintName: 'PK_user_balance_user',
   })
   userId: string;
 
   @Exclude()
-  @ManyToOne(() => User, (User) => User.id, {
+  @ManyToOne(() => User, (user) => user.userBalance, {
     nullable: false,
     cascade: true,
     onDelete: 'CASCADE',

@@ -15,12 +15,23 @@ import { Roles } from './decorators/roles.decorator';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh.auth.guard';
 import { Role } from './enum/roles.enum';
 import { IValidateUser } from './interfaces/validate-user.interfaces';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
   ) {}
+
+  @Post('register')
+  @HttpCode(HttpStatus.CREATED)
+  async register(@Body() createUserDto: CreateUserDto) {
+    await this.authService.register(createUserDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Success create account',
+    };
+  }
 
   @Post('refresh-token')
   @Roles(Role.SUPERUSER, Role.ADMIN, Role.USER)
