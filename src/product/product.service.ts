@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
@@ -88,7 +88,7 @@ export class ProductService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageParametersDto });
 
-    return new PageDto(products, pageMetaDto, 'Success get product');
+    return new PageDto(HttpStatus.OK,  'Success get product', products, pageMetaDto);
   }
 
   async updateProduct(createProductDto: CreateProductDto & { id: string }) {

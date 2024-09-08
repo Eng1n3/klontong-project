@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -88,7 +89,7 @@ export class RoleService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageParametersDto });
 
-    return new PageDto(roles, pageMetaDto, 'Success get roles');
+    return new PageDto(HttpStatus.OK, 'Success get roles', roles, pageMetaDto);
   }
 
   async createRole(createRoleDto: CreateRoleDto) {

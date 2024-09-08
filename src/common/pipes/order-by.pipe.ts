@@ -6,6 +6,10 @@ export class OrderByValidationPipe implements PipeTransform {
   constructor(private orderEnum: any) {}
 
   transform(value: string) {
+    if (!value) {
+      return;
+    } else {
+    }
     if (isDefined(value) && isEnum(value, this.orderEnum)) {
       return this.orderEnum[value.toLocaleUpperCase()];
     } else {

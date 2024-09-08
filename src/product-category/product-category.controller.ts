@@ -12,6 +12,7 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { ProductCategoryService } from './product-category.service';
@@ -20,21 +21,29 @@ import { OrderByValidationPipe } from 'src/common/pipes/order-by.pipe';
 import { ProductCategoryOrderBy } from './enum/product-category-order-by.enum';
 import { ApiQuery } from '@nestjs/swagger';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/enum/roles.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('product-category')
 export class ProductCategoryController {
   constructor(private productCategoryService: ProductCategoryService) {}
 
   @Delete(':id')
+  @Roles(Role.SUPERUSER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async deleteProductCategory(@Param('id', ParseUUIDPipe) id: string) {
     await this.productCategoryService.deleteProductCategory(id);
     return {
+      statusCode: HttpStatus.OK,
       message: 'Success deleted category',
     };
   }
 
   @Patch(':id')
+  @Roles(Role.SUPERUSER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async updateProductCategory(
     @Param('id', ParseUUIDPipe) id: string,
@@ -45,21 +54,27 @@ export class ProductCategoryController {
       id,
     });
     return {
+      statusCode: HttpStatus.OK,
       message: 'Success updated category',
     };
   }
 
   @Get(':id')
+  @Roles(Role.SUPERUSER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   async findOneProductCategory(@Param('id', ParseUUIDPipe) id: string) {
     const data = await this.productCategoryService.findOneProductCategory(id);
     return {
+      statusCode: HttpStatus.OK,
       message: 'Success get category',
       data
     };
   }
 
   @Get()
+  @Roles(Role.SUPERUSER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiQuery({ name: 'order_by', enum: ProductCategoryOrderBy })
   async findAllProductCategory(
@@ -75,6 +90,8 @@ export class ProductCategoryController {
   }
 
   @Post()
+  @Roles(Role.SUPERUSER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   async createProductCategory(
     @Body() createProductCategoryDto: CreateProductCategoryDto,
@@ -82,6 +99,6 @@ export class ProductCategoryController {
     await this.productCategoryService.createProductCategory(
       createProductCategoryDto,
     );
-    return { message: 'Succes created category' };
+    return { statusCode: HttpStatus.CREATED, message: 'Succes created category' };
   }
 }

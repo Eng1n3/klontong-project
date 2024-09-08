@@ -1,6 +1,5 @@
 import { MemoryStoredFile } from 'nestjs-form-data';
 import { CreateFile } from '../interfaces/create-file.interface';
-import { ConfigService } from 'src/config/config.service';
 import * as dayjs from 'dayjs';
 import { generate } from 'randomstring';
 import { existsSync, statSync, unlinkSync, writeFileSync } from 'fs';
@@ -9,10 +8,17 @@ import { fromFile } from 'file-type';
 import * as mime from 'mime-types';
 import { createHash } from 'crypto';
 import * as fs from 'fs';
+import { ConfigService } from '@nestjs/config';
 
 const configService = new ConfigService();
 
-function getChecksum(filePath: string, algorithm = 'sha256'): Promise<string> {
+export function getSize(filePath: string) {
+  const stats = statSync(filePath);
+  const fileSizeInBytes = stats.size;
+  return fileSizeInBytes
+}
+
+export function getChecksum(filePath: string, algorithm = 'sha256'): Promise<string> {
   return new Promise((resolve, reject) => {
     const hash = createHash(algorithm);
     const stream = fs.createReadStream(filePath);
@@ -30,6 +36,11 @@ function getChecksum(filePath: string, algorithm = 'sha256'): Promise<string> {
       reject(err);
     });
   });
+}
+
+export async function getMimetype(filePath: string) {
+  const file = await  fromFile(filePath)
+  return file.mime
 }
 
 function deleteFile(path: string): void {
@@ -70,15 +81,17 @@ export async function createFileFunction(
     filename = `${newFileName}.webp`;
   }
 
-  const stats = statSync(`${uploadPathWithPublic}/${filename}`);
-  const fileSizeInBytes = stats.size;
+
+  const size = getSize(`${uploadPathWithPublic}/${filename}`)
+
+  const mimetype = await getMimetype(`${uploadPathWithPublic}/${filename}`)
 
   return {
     path: `${uploadPathWithPublic}/${filename}`,
     filename,
     originalFilename: file.originalName,
-    mime: (await fromFile(`${uploadPathWithPublic}/${filename}`)).mime,
-    size: fileSizeInBytes,
+    mime: mimetype,
+    size,
     checksum: await getChecksum(`${uploadPathWithPublic}/${filename}`),
   };
 }

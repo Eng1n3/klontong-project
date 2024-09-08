@@ -1,8 +1,11 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { join } from 'path';
-import { ConfigService } from 'src/config/config.service';
+import 'src/common/config/config.env';
+import { ConfigService } from '@nestjs/config';
 
 const configService = new ConfigService();
+
+configService.get('DATABASE_PASSWORD')
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',

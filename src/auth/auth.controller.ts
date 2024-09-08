@@ -6,32 +6,39 @@ import {
   HttpCode,
   HttpStatus,
   Body,
+  Get,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
-import { CreateSuperuserDto } from './dtos/create-superuser.dto';
-import { LoginDto } from './dtos/login.dto';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from 'src/user/entities/user.entity';
+import { Roles } from './decorators/roles.decorator';
+import { JwtRefreshAuthGuard } from './guards/jwt-refresh.auth.guard';
+import { Role } from './enum/roles.enum';
+import { IValidateUser } from './interfaces/validate-user.interfaces';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    // private readonly superusersService: UsersService,
   ) {}
+
+  @Post('refresh-token')
+  @Roles(Role.SUPERUSER, Role.ADMIN, Role.USER)
+  @UseGuards(JwtRefreshAuthGuard)
+  async refreshToken(@CurrentUser() user: IValidateUser) {
+    const token = await this.authService.login(user);
+    const refreshToken = this.authService.refreshToken(user);
+    return { token, refreshToken };
+  }
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req, @Body() loginDto: LoginDto) {
-    return this.authService.login(req.user);
+  async login(
+    @CurrentUser() user: IValidateUser,
+  ) {
+    const token = await this.authService.login(user);
+    const refreshToken = this.authService.refreshToken(user);
+    return { token, refreshToken };
   }
-
-  // @Post('register')
-  // @HttpCode(HttpStatus.CREATED)
-  // async register(@Body() createSuperuserDto: CreateSuperuserDto) {
-  //   await this.superusersService.register(createSuperuserDto);
-  //   return {
-  //     statusCode: HttpStatus.CREATED,
-  //     message: 'Success create account',
-  //   };
-  // }
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -92,7 +93,7 @@ export class ProductCategoryService {
 
     const pageMetaDto = new PageMetaDto({ itemCount, pageParametersDto });
 
-    return new PageDto(categories, pageMetaDto, 'Success get categories');
+    return new PageDto(HttpStatus.OK, 'Success get categories', categories, pageMetaDto);
   }
 
   async createProductCategory(

@@ -5,7 +5,10 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from '../auth.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwtRefresh',
+) {
   constructor(
     private configService: ConfigService,
     private authService: AuthService,
@@ -13,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_PRIVATE_KEY'),
+      secretOrKey: configService.get('JWT_REFRESH_TOKEN_PRIVATE_KEY'),
     });
   }
 
@@ -22,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       const user = await this.authService.findUser(
         payload.email.toLowerCase() as string,
       );
-      if (!user) throw new UnauthorizedException('wrong email or password!');
+      if (!user) throw new UnauthorizedException();
       return {
         id: payload.sub,
         email: payload.email,

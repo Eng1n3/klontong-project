@@ -1,4 +1,44 @@
 ###
+POST http://localhost:3000/auth/refresh-token HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJzdXBlcnVzZXIiXSwiZW1haWwiOiJzdXBlcnVzZXJAbWFpbC5jb20iLCJzdWIiOiJkNGNlN2M1ZC1kMDI1LTQ1NjMtYjM5Ny05NjFjY2Y4MzgxZWEiLCJpYXQiOjE3MjU3NzgwMTIsImV4cCI6MTcyNTgwODAxMn0.KbGOSSAjos3zEKJ8T7bHwGRRhA7MY1BHSMlZpFEUgIQ
+
+
+###
+POST http://localhost:3000/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "superuser@mail.com",
+    "password": "Sup3rstrong_password"
+}
+
+###
+PATCH http://localhost:3000/role/19d2b797-f5ff-4241-9034-2a11fb36d6dd HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJzdXBlcnVzZXIiXSwiZW1haWwiOiJzdXBlcnVzZXJAbWFpbC5jb20iLCJzdWIiOiJkNGNlN2M1ZC1kMDI1LTQ1NjMtYjM5Ny05NjFjY2Y4MzgxZWEiLCJpYXQiOjE3MjU3Nzg2MDQsImV4cCI6MTcyNTgwODYwNH0.Z48g1Ij2r_XQyIGE3KR0Wz8ZAoftoQekRQ5RVQnu-TE
+
+{
+    "name": "doo"
+}
+
+###
+GET http://localhost:3000/role HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJzdXBlcnVzZXIiXSwiZW1haWwiOiJzdXBlcnVzZXJAbWFpbC5jb20iLCJzdWIiOiJkNGNlN2M1ZC1kMDI1LTQ1NjMtYjM5Ny05NjFjY2Y4MzgxZWEiLCJpYXQiOjE3MjU3Nzc5ODksImV4cCI6MTcyNTgwNzk4OX0.I_LIU1-V10NcIM3mNQZ_dotRnqDnFU9IY6E8_Fk8e6A
+
+
+###
+POST http://localhost:3000/role HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlcyI6WyJzdXBlcnVzZXIiXSwidXNlcm5hbWUiOiJzdXBlcnVzZXIiLCJlbWFpbCI6InN1cGVydXNlckBtYWlsLmNvbSIsInN1YiI6ImQ0Y2U3YzVkLWQwMjUtNDU2My1iMzk3LTk2MWNjZjgzODFlYSIsImlhdCI6MTcyNTc3NTQzMCwiZXhwIjoxNzI1ODA1NDMwfQ.hGugO5ZfDSIoJB2xz8-cIpMMWIcK6GsVY73mBAG-ZBU
+
+{
+    "name": "baru",
+    "description": "role admin"
+}
+
+###
 DELETE http://localhost:3000/product/f2ae1962-c18e-4117-8869-1ce1c0d0bc6a HTTP/1.1
 Content-Type: application/json
 
@@ -18,7 +58,7 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/product-category?order_by=id&direction=desc HTTP/1.1
+GET http://localhost:3000/product-category?direction=desc HTTP/1.1
 
 ###
 POST http://localhost:3000/product-category HTTP/1.1
