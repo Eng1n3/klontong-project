@@ -61,7 +61,7 @@ export class ProductController {
   }
 
   @Get(':id')
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.SUPERUSER, Role.ADMIN, Role.USER)
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
   @HttpCode(HttpStatus.OK)
@@ -75,7 +75,7 @@ export class ProductController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.USER)
+  @Roles(Role.SUPERUSER, Role.ADMIN, Role.USER)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(ClassSerializerInterceptor)
