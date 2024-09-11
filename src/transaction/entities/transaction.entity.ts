@@ -13,7 +13,7 @@ import {
 import { VirtualCode } from 'src/virtual-code/entities/virtual-code.entity';
 
 @Entity('transactions')
-export class UserRole {
+export class Transaction {
   @PrimaryColumn({ primaryKeyConstraintName: 'PK_transactions' })
   id: string;
 

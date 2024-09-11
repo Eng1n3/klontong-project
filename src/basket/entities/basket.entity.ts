@@ -13,7 +13,7 @@ import { User } from 'src/user/entities/user.entity';
 import { Product } from 'src/product/entities/product.entity';
 
 @Entity('basket')
-export class UserRole {
+export class Basket {
 
   @PrimaryColumn({ name: 'user_id', primaryKeyConstraintName: 'PK_basket' })
   userId: string;
