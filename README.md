@@ -22,6 +22,12 @@ $ npm install
 ## Compile and run the project
 
 ```bash
+# running migration
+$ npm run migration:run
+
+# running seeding
+$ npm run seed:run
+
 # development
 $ npm run start
 
