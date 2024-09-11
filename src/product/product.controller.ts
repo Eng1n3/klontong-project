@@ -26,6 +26,7 @@ import { Role } from 'src/auth/enum/roles.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('product')
 export class ProductController {
@@ -54,9 +55,9 @@ export class ProductController {
   async updateProduct(
     @CurrentUser() user: IValidateUser,
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() createProductDto: CreateProductDto,
+    @Body() updateProductDto: UpdateProductDto,
   ) {
-    await this.productService.updateProduct({ ...createProductDto, id }, user);
+    await this.productService.updateProduct({ ...updateProductDto, id }, user);
     return { statusCode: HttpStatus.OK, message: 'Succes updated product' };
   }
 

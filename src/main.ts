@@ -13,12 +13,12 @@ async function bootstrap() {
 
   // const bodyJsonLimit = configService.get<number>('BODY_JSON_LIMIT_IN_MB');
   // app.useBodyParser('json', { limit: `${6}mb` });
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     transform: true,
-  //   }),
-  // );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+    }),
+  );
   await app.listen(port);
 }
 bootstrap();

@@ -5,8 +5,6 @@ import { ConfigService } from '@nestjs/config';
 
 const configService = new ConfigService();
 
-configService.get('DATABASE_PASSWORD')
-
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
   host: configService.get<string>('DATABASE_HOST'),

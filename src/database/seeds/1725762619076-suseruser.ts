@@ -12,6 +12,7 @@ import {
   getMimetype,
   getSize,
 } from 'src/common/functions/create-file.function';
+import { pathDefaultImage } from 'src/auth/constants';
 
 export default class SuperUser1725762619076 extends Seeder {
   public async run(datasource: DataSource): Promise<void> {
@@ -19,11 +20,6 @@ export default class SuperUser1725762619076 extends Seeder {
       .getRepository(SeederEntity)
       .find({ where: { name: SuperUser1725762619076.name } });
     if (!dataSeeder.length) {
-      const pathDefaultImage = join(
-        process.cwd(),
-        'uploads',
-        'default-user.jpg',
-      );
       const checksum = await getChecksum(pathDefaultImage);
       const mimeType = await getMimetype(pathDefaultImage);
       const size = getSize(pathDefaultImage);

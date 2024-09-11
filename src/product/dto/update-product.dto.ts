@@ -1,10 +1,10 @@
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   IsUUID,
+  ValidateIf,
 } from 'class-validator';
 import {
   HasMimeType,
@@ -16,59 +16,60 @@ import { IsAtLeastOneFieldPresent } from 'src/common/decorators/least-one-field-
 
 export class UpdateProductDto {
   @IsOptional()
-  @IsUUID()
-  @Transform(({ value }) => {
-    return value;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
   })
-  productCategoryId: string;
+  productCategoryId?: string;
 
-  @IsOptional()
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
+  })
   @IsString()
-  name: string;
+  name?: string;
 
-  @IsOptional()
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
+  })
   @IsString()
-  description: string;
+  description?: string;
 
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => {
-    return +value;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
   })
-  weight: number;
+  @IsNumber()
+  weight?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => {
-    return +value;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
   })
-  width: number;
+  @IsNumber()
+  width?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => {
-    return +value;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
   })
-  length: number;
+  @IsNumber()
+  length?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => {
-    return +value;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
   })
-  height: number;
+  @IsNumber()
+  height?: number;
 
-  @IsOptional()
-  @IsNumber()
-  @Transform(({ value }) => {
-    return +value;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
   })
-  price: number;
+  @IsNumber()
+  price?: number;
 
   @IsFile()
   @HasMimeType(['image/jpg', 'image/jpeg', 'image/png', 'image/webp'])
   @MaxFileSize(5 * 1024 * 1024)
-  image: MemoryStoredFile;
+  @ValidateIf(({ value }) => {
+    return value ? true : false;
+  })
+  image?: MemoryStoredFile;
 
   @IsAtLeastOneFieldPresent(
     [
@@ -82,8 +83,16 @@ export class UpdateProductDto {
       'image',
     ],
     {
-      message:
-        'At least one of the fields (name or description) must be provided',
+      message: `At least one of the fields (${[
+        'name',
+        'description',
+        'weight',
+        'width',
+        'length',
+        'height',
+        'price',
+        'image',
+      ].join(', ')}) must be provided`,
     },
   )
   checkFields: boolean;

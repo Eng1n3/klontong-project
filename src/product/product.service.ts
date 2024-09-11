@@ -1,4 +1,9 @@
-import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { FindOptionsOrder, FindOptionsWhere, ILike, Repository } from 'typeorm';
@@ -14,6 +19,7 @@ import { CreateFile } from 'src/common/interfaces/create-file.interface';
 import { File } from 'src/file/entities/file.entity';
 import { IValidateUser } from 'src/auth/interfaces/validate-user.interfaces';
 import { Log } from 'src/log/entities/log.entity';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -114,15 +120,16 @@ export class ProductService {
   }
 
   async updateProduct(
-    createProductDto: CreateProductDto & { id: string },
+    updateProductDto: UpdateProductDto & { id: string },
     user: IValidateUser,
   ) {
     let createFile: CreateFile;
     let sku: string;
-    const imageDto = createProductDto.image;
+    const imageDto = updateProductDto.image;
+    if (!imageDto) throw new BadRequestException('file not found!');
     const isExist = await this.productRepo.findOne({
       where: {
-        id: createProductDto.id,
+        id: updateProductDto.id,
       },
       relations: { file: true },
     });
@@ -134,15 +141,15 @@ export class ProductService {
         force: true,
       });
     }
-    if (createProductDto.name && createProductDto.weight) {
-      sku = this.generateSku(createProductDto.name, createProductDto.weight);
+    if (updateProductDto.name && updateProductDto.weight) {
+      sku = this.generateSku(updateProductDto.name, updateProductDto.weight);
     }
     const isExistsCategory = await this.productCategoryRepo.findOneBy({
-      id: createProductDto.productCategoryId,
+      id: updateProductDto.productCategoryId,
     });
     if (!isExistsCategory) throw new NotFoundException('category not found');
     const productCreate = this.productRepo.create({
-      ...createProductDto,
+      ...updateProductDto,
       sku: sku ? sku : undefined,
       file: createFile
         ? {
@@ -174,7 +181,7 @@ export class ProductService {
 
   async createProduct(createProductDto: CreateProductDto, user: IValidateUser) {
     const imageDto = createProductDto.image;
-    if(!imageDto) throw new BadRequestException('file not found!')
+    if (!imageDto) throw new BadRequestException('file not found!');
     const fileValue = await createFileFunction(imageDto, 'product-images');
     const sku = this.generateSku(
       createProductDto.name,
