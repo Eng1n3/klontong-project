@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { Exclude, Expose } from 'class-transformer';
 import { File } from 'src/file/entities/file.entity';
 import { ProductCategory } from 'src/product-category/entities/product-category.entity';
@@ -11,6 +12,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+const configService = new ConfigService()
 
 @Entity('products')
 export class Product {
@@ -90,7 +93,7 @@ export class Product {
 
   @Expose({ name: 'image' })
   get imagePath(): string {
-    return this.file.path;
+    return `${configService.get('BASE_URL_APP')}/${this.file.path}`
   }
 
   @Expose()

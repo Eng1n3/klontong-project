@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { Exclude, Expose } from 'class-transformer';
 import { File } from 'src/file/entities/file.entity';
 import { Log } from 'src/log/entities/log.entity';
@@ -14,6 +15,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+const configService = new ConfigService()
 
 @Entity('users')
 export class User {
@@ -68,4 +71,13 @@ export class User {
 
   @OneToMany((type) => UserBalance, (userBalance) => userBalance.user)
   userBalance?: UserBalance;
+
+  @Expose({ name: 'image' })
+  get imagePath(): string {
+    return `${configService.get('BASE_URL_APP')}/${this.file.path}`
+  }
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
 }
